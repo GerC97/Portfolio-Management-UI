@@ -9,7 +9,9 @@ Once a portfolio is created, users can acess a range of functions like 'Raw Data
 
 The second section consists of a brief summary of whats happening across global indices, currencies, crypto currencies and bond markets.
 
-The third section consists of a Black-Scholes approximation for pricing Call/Put Options.
+The third section consists of a basic Black-Scholes approximation for pricing Call/Put Options.
+
+This script is intended for personal use only.
 
 Disclaimer: The information furnished on this application is for informational purposes only. The information provided does not constitute investment advice and should not be considered as advice to buy or sell securities. The information should not be relied upon by any person to make an investment decision.
 
