@@ -204,7 +204,7 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
             #this is for uploading a custom portfolio via a .csv
             global file, df_constituents_base
             file = pd.read_csv(filedialog.askopenfilename(initialdir='/Desktop',title='Select Portfolio csv',filetypes = (("CSV Files","*.csv"),)))
-            if len(file['Symbol']) <= 516:
+            if len(file['Symbol']) <= 15:
                 df_constituents_base = file
             else:
                 messagebox.showerror("Error", "Can not select more than 15 assets")
