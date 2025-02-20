@@ -1,4 +1,4 @@
-# Yahoo-Finance-Data-Python-UI
+# Portfolio-Management-UI
 A Tkinter UI for pulling Historical Stock Data from Yahoo Finance
 
 
