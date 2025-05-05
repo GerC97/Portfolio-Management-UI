@@ -204,7 +204,7 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
             #this is for uploading a custom portfolio via a .csv
             global file, df_constituents_base
             file = pd.read_csv(filedialog.askopenfilename(initialdir='/Desktop',title='Select Portfolio csv',filetypes = (("CSV Files","*.csv"),)))
-            if len(file['Symbol']) <= 15:
+            if len(file['Symbol']) <= 516:
                 df_constituents_base = file
             else:
                 messagebox.showerror("Error", "Can not select more than 15 assets")
@@ -274,30 +274,32 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
         lst_url = [f'https://query2.finance.yahoo.com/v8/finance/chart/{symbol}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true' 
                 for symbol in lst_symbol_list]
         http = urllib3.PoolManager()
-        request = [http.request('GET', lst_url[i]) for i in range(0,len(lst_symbol_list))]
+        print(lst_url)
+        request = [http.request('GET', lst_url[i], headers = {'User-agent':"Mozilla/5.0 (Windows NT 6.1; Win64; x64)"}) for i in range(0,len(lst_symbol_list))]
+        print(request)
         http_status = [request[i].status for i in range(0,len(lst_symbol_list))]
         #http_status_description = responses[http_status]
         error_404_index = [i for i in range(len(http_status)) if http_status[i] == 404]
         constituents_base = df_constituents_base.drop(error_404_index)     
         symbol_list = sorted(sum(constituents_base.drop(['Name', 'Sector'], axis = 1).to_numpy().tolist(), [])) #sum [] needed to reduce nested list
         url = [f'https://query2.finance.yahoo.com/v8/finance/chart/{symbol}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true' 
-                for symbol in symbol_list]  
-        data = [pd.read_json(url[i]) for i in range(0, len(symbol_list),1)]
+                for symbol in symbol_list] 
+        headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"}
+        data = [[requests.get(url[i], headers=headers).json()] for i in range(0, len(symbol_list),1)]
+        print(data)
         dataC = data.copy()
         dataCC = dataC.copy()
         dates = []
         for i in range(0, len(symbol_list)):
-            data[i] = data[i].iloc[0]
-            data[i] = data[i].iloc[0]
-            data[i] = pd.DataFrame(data[i][0]['indicators']['quote'][0])
-            dates.append(dataC[i].iloc[0].iloc[0][0]['timestamp'])
+            data[i] = pd.DataFrame(data[i][0]['chart']['result'][0]['indicators']['quote'][0])
+            dates.append(dataC[i][0]['chart']['result'][0]['timestamp'])
             data[i]['Date'] = dates[i]
             for j in range(0, len(data[i]['Date'])):
                 data[i]['Date'][j] = time.strftime('%Y-%m-%d', time.gmtime(data[i]['Date'][j]))
 
         tickers = []
         for i in range(0, len(symbol_list)):
-            tickers.append(list(pd.Series(dataCC[i].iloc[0].iloc[0][0]['meta']['symbol']))*len(dataCC[i].iloc[0].iloc[0][0]['timestamp']))
+            tickers.append(list(pd.Series(dataCC[i][0]['chart']['result'][0]['meta']['symbol']))*len(dataCC[i][0]['chart']['result'][0]['timestamp']))
             data[i]['Symbol'] = tickers[i]
 
         data_app = pd.concat(data, ignore_index=False)
@@ -397,16 +399,18 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
         difference_2 = str((today_format - base_date_format).days*secs)
         five_yr_yield = '^FVX' #using the five year treasury yield as the risk free rate
         RFR_url  = f'https://query2.finance.yahoo.com/v8/finance/chart/{five_yr_yield}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true'
-        r = pd.read_json(RFR_url)
-        r = r.iloc[0].iloc[0][0]['meta']['chartPreviousClose']/100
+        headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"}
+        r = [requests.get(RFR_url, headers=headers).json()]
+        print(r)
+        r = r[0]['chart']['result'][0]['meta']['chartPreviousClose']/100
         print(r)
         tickerQ = simpledialog.askstring("Ticker", "Enter a Ticker:")
         one_year_ago = (datetime.now() - timedelta(365)).strftime('%d/%m/%Y')
         one_year_ago_format = datetime.strptime(one_year_ago, date_format)
         difference_1 = str((one_year_ago_format - base_date_format).days*secs)
         volEst_url  = f'https://query2.finance.yahoo.com/v8/finance/chart/{tickerQ}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true'
-        volEst_data = pd.read_json(volEst_url)
-        volEst_data = volEst_data.iloc[0].iloc[0][0]['indicators']['quote'][0]['close']
+        volEst_data = [requests.get(volEst_url, headers=headers).json()]
+        volEst_data = volEst_data[0]['chart']['result'][0]['indicators']['quote'][0]['close']
         returns = [0] + [(volEst_data[i+1]-volEst_data[i])/volEst_data[i] for i in range(0, len(volEst_data)-1)]
         sigma = round(np.std(returns)*np.sqrt(252),2) #annualising volatility approximation
         print(sigma)
