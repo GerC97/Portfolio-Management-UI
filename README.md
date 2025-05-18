@@ -2,14 +2,12 @@
 A Tkinter UI for pulling Historical Stock Data from Yahoo Finance
 
 
-The Tkinter UI script (PortfolioManager_v1.0.py) is split up into three main sections. (Screenshots can be seen in the 'Screenshots folder)
+The Tkinter UI script (PortfolioManager_v1.0.py) is split up into two main sections. (Screenshots can be seen in the 'Screenshots folder)
 
 The first section 'Custom Portfolio Tools' allows users to create a custom portfolio by entering tickers manually into the UI or by uploading a .csv file.
 Once a portfolio is created, users can acess a range of functions like 'Raw Data' (historical prices), 'Correlation Matrix' (a correlation matrix derived from the returns of securities over a specified period), 'Daily Returns' (Day to Day % change), 'Performance' (Performance over a specified period), 'Plot Returns' (% Returns vs Time), 'Scenarios'(A look at how the portfolio returned during some key historical events) and 'Statistics'(some basic statistics and ratios).
 
 The second section consists of a brief summary of whats happening across global indices, currencies, crypto currencies and bond markets.
-
-The third section consists of a basic Black-Scholes approximation for pricing Call/Put Options.
 
 This script is intended for personal use only.
 
