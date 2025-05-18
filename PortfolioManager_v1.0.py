@@ -36,8 +36,7 @@ class port_manager:
             tk.Button(app, text = 'Cryptocurrencies', command=lambda:[which_button(button_text = "Cryptocurrencies"), self.markets(), view_markets()], font='Helvitica', width=18, bg='gold2', relief='solid').grid(row = 3, column = 0, columnspan=1, padx = 3, pady = 3)
             tk.Button(app, text = 'Global Indices', command=lambda:[which_button(button_text = "Global Indices"), self.markets(), view_markets()], font='Helvitica', width=18, bg='gold2', relief='solid').grid(row = 4, column = 0, columnspan=1, padx = 3, pady = 3)
             tk.Button(app, text = 'Bond Markets', command=lambda:[which_button(button_text = "Bond Markets"), self.markets(), view_markets()], font='Helvitica', width=18, bg='gold2', relief='solid').grid(row = 5, column = 0, columnspan=1, padx = 3, pady = 3)
-            tk.Button(app, text = 'Options Analysis', command = options_query, font='Helvitica', width=18, bg='gold2', relief='solid').grid(row = 6, column = 0, columnspan=1, padx = 3, pady = 3)
-            tk.Button(app, text = 'User Guide', command = user_guide, font='Helvitica', width=18, bg='gold2', relief='solid').grid(row = 7, column = 0, columnspan=1, padx = 3, pady = 3)
+            tk.Button(app, text = 'User Guide', command = user_guide, font='Helvitica', width=18, bg='gold2', relief='solid').grid(row = 6, column = 0, columnspan=1, padx = 3, pady = 3)
             Label(app, text = "Disclaimer: The information furnished on this application is for informational purposes only. The information provided does not constitute investment ", bg = 'gray30', fg = 'white').grid(row = 8, column = 0)
             Label(app, text = "advice and should not be considered as advice to buy or sell securities. The information should not be relied upon by any person to make an investment decision.", bg = 'gray30', fg = 'white').grid(row = 9, column = 0)
       
@@ -103,29 +102,17 @@ class port_manager:
             tk.Label(app, text = 'Mar 2000: The tech bubble bursts.', bg='gray70', width = 75, height = 3, relief = 'solid').grid(row = 5, column = 1,pady=2, sticky='w')
             Label(app, text = "NOTE: Please ensure selected stocks were public companies during the listed timeframes.", bg = 'gray30', fg = 'white').grid(row = 6, column = 0, columnspan=3)
 
-        def page5(app):
-            #Options Page - basic Black-Schole methodology
-            page = tk.Frame(app)
-            page.grid()
-            tk.Button(app, text = '⬅', command = home, font='Helvitica', width = 8, bg='gold2', relief='solid').grid(row = 0, column = 0,pady=2,padx=5, sticky='w')
-            tk.Label(app, text = 'Function', bg='gray21', fg='gray70', height = 2, relief = 'solid', font=14).grid(row = 1, column = 0,pady=2,padx=5, sticky='news')
-            tk.Label(app, text = 'Description', bg='gray21', fg='gray70', height = 2, relief = 'solid', font=14).grid(row = 1, column = 1,pady=2, sticky='news')
-            tk.Button(app, text = 'Black Scholes Call', command=lambda:[which_button(button_text="Black Scholes Call"), self.blackScholes()], font='Helvitica', width = 20, height = 2, bg='gold2', relief='solid').grid(row = 4, column = 0,pady=2,padx=5, sticky='w')
-            tk.Button(app, text = 'Black Scholes Put', command=lambda:[which_button(button_text="Black Scholes Put"), self.blackScholes()], font='Helvitica', width = 20, height = 2, bg='gold2', relief='solid').grid(row = 5, column = 0,pady=2,padx=5, sticky='w')
-            tk.Label(app, text = 'Give a strike price and use the common Black Scholes methodology to estimate the call price.', bg='gray70', width = 75, height = 3, relief = 'solid').grid(row = 4, column = 1,pady=2, sticky='w')
-            tk.Label(app, text = 'Give a strike price and use the common Black Scholes methodology to estimate the put price.', bg='gray70', width = 75, height = 3, relief = 'solid').grid(row = 5, column = 1,pady=2, sticky='w')
-
         def help():
             tk.messagebox.showinfo("Help", "Input Stock Symbol, Name and Sector - For example: AAPL | Apple | Information Technology. \
 NOTE: Stock Symbol must be exact, but Name and Sector do not have to match the Symbol - For example: AAPL | APPLE INC | Big Tech. \
 Equivalently, you can upload a portfolio using a .csv file - Please ensure the csv has the same headers as the table.")
 
         def user_guide():
-            tk.messagebox.showinfo("User Guide","This app contains three different sections with different functionality. The first section 'Custom Portfolio Tools' allows users to create a hypothetical portfolio to conduct analysis on.\
+            tk.messagebox.showinfo("User Guide","This app contains two different sections with different functionality. The first section 'Custom Portfolio Tools' allows users to create a hypothetical portfolio to conduct analysis on.\
  This can be done by using the table provided or uploading a csv with the same headers as the table provided.\
  Once a portfolio is created there are multiple tools such as 'Raw Data', 'Correlation Matrix','Daily Returns', 'Performance', 'Plots', 'Scenarios' and 'Statistics.\
  The second section provides an overview of whats happening in the markets, see 'Currencies, ' Cryptocurrencies', 'Global Indices' and 'Bond Yields.'\
- The third section 'Options Analysis' provides a Black Scholes calculator for estimating option contract values.")
+")
             
         def get_table():
             #Takes your custom portfolio inputs and stores them in a dataframe and as a .csv in your working directory.
@@ -233,12 +220,6 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
                 widget.destroy()
             page4(app)
 
-        def options_query():
-            #next page function
-            for widget in app.winfo_children():
-                widget.destroy()
-            page5(app)
-
         #configuring mainloop
         app.title("Portfolio Manager v1.0")
         app.configure(bg='gray30')
@@ -247,7 +228,27 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
 
     def request(self):
         #price history function - for scenarios function it takes the fixed dates, for custom dates there are input boxes that take dates in the format dd/mm/yyyy
-        global data, data_app, dates, data_all, start_date, end_date, symbol_list
+        global data, data_app, dates, data_all, start_date, end_date, lst_symbol_list
+
+        apiBase = 'https://query2.finance.yahoo.com'
+        headers = { 
+        "User-Agent": 
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"
+        }
+        
+        def getCredentials(cookieUrl='https://fc.yahoo.com', crumbUrl=apiBase+'/v1/test/getcrumb'):
+            cookie = requests.get(cookieUrl).cookies
+            crumb = requests.get(url=crumbUrl, cookies=cookie, headers=headers).text
+            return {'cookie': cookie, 'crumb': crumb}
+        def quote(symbols, credentials):
+            url = apiBase + f'/v8/finance/chart/{symbols}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true'
+            print(url)
+            params = {'symbols': ','.join(symbols), 'crumb': credentials['crumb']}
+            print(params)
+            response = requests.get(url, params=params, cookies=credentials['cookie'], headers=headers)
+            quotes = response.json()
+            return quotes
+        
         if msg == "Button Clicked: Yen Carry Trade":
             start_date = '02/08/2024'
             end_date = '06/08/2024'
@@ -273,38 +274,28 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
         difference_2 = str((end_date_format - base_date_format).days*secs+secs)
         lst_url = [f'https://query2.finance.yahoo.com/v8/finance/chart/{symbol}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true' 
                 for symbol in lst_symbol_list]
-        http = urllib3.PoolManager()
-        print(lst_url)
-        request = [http.request('GET', lst_url[i], headers = {'User-agent':"Mozilla/5.0 (Windows NT 6.1; Win64; x64)"}) for i in range(0,len(lst_symbol_list))]
-        print(request)
-        http_status = [request[i].status for i in range(0,len(lst_symbol_list))]
-        #http_status_description = responses[http_status]
-        error_404_index = [i for i in range(len(http_status)) if http_status[i] == 404]
-        constituents_base = df_constituents_base.drop(error_404_index)     
-        symbol_list = sorted(sum(constituents_base.drop(['Name', 'Sector'], axis = 1).to_numpy().tolist(), [])) #sum [] needed to reduce nested list
-        url = [f'https://query2.finance.yahoo.com/v8/finance/chart/{symbol}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true' 
-                for symbol in symbol_list] 
-        headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"}
-        data = [[requests.get(url[i], headers=headers).json()] for i in range(0, len(symbol_list),1)]
-        print(data)
+        
+        credentials = getCredentials()
+        data = [quote(lst_symbol_list[i], credentials) for i in range(0, len(lst_symbol_list))]        
         dataC = data.copy()
         dataCC = dataC.copy()
         dates = []
-        for i in range(0, len(symbol_list)):
-            data[i] = pd.DataFrame(data[i][0]['chart']['result'][0]['indicators']['quote'][0])
-            dates.append(dataC[i][0]['chart']['result'][0]['timestamp'])
+        for i in range(0, len(lst_symbol_list)):
+            data[i] = pd.DataFrame(data[i]['chart']['result'][0]['indicators']['quote'][0])
+            dates.append(dataC[i]['chart']['result'][0]['timestamp'])
             data[i]['Date'] = dates[i]
             for j in range(0, len(data[i]['Date'])):
                 data[i]['Date'][j] = time.strftime('%Y-%m-%d', time.gmtime(data[i]['Date'][j]))
 
         tickers = []
-        for i in range(0, len(symbol_list)):
-            tickers.append(list(pd.Series(dataCC[i][0]['chart']['result'][0]['meta']['symbol']))*len(dataCC[i][0]['chart']['result'][0]['timestamp']))
+        for i in range(0, len(lst_symbol_list)):
+            tickers.append(list(pd.Series(dataCC[i]['chart']['result'][0]['meta']['symbol']))*len(dataCC[i]['chart']['result'][0]['timestamp']))
             data[i]['Symbol'] = tickers[i]
 
         data_app = pd.concat(data, ignore_index=False)
-        data_all = pd.merge(data_app, constituents_base, on="Symbol", how="left")
-        data_all = data_all[['Date','Symbol','Name','Sector','open','high','low','close','volume']].rename(columns = {'Symbol':'Ticker','Name':'Asset_Name','open':'Open_Price','high':'High_Price','low':'Low_Price','close':'Close_Price','volume':'Volume'})        
+        data_all = pd.merge(data_app, df_constituents_base, on="Symbol", how="left")
+        data_all = data_all[['Date','Symbol','Name','Sector','open','high','low','close','volume']].rename(columns = {'Symbol':'Ticker','Name':'Asset_Name','open':'Open_Price','high':'High_Price','low':'Low_Price','close':'Close_Price','volume':'Volume'}) 
+        print(data_all)
         now = format(datetime.now().strftime('%d-%m-%Y %H-%M-%S'))
         data_all.to_excel(os.path.join(cwd, "Portfolio_Data " + now +".xlsx"), index=False)
         messagebox.showinfo("Raw Data", "Portfolio Raw Data Has Been Saved: " + os.path.join(cwd, "Portfolio_Data " + now +".xlsx"))
@@ -361,11 +352,11 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
     def plot(self):
         #plotting portfolio returns
         if msg == "Button Clicked: Plot Returns":  
-            data_Q = [data_ror.query(f'Ticker == @symbol_list{[k]}') for k in range(0, len(symbol_list))]
+            data_Q = [data_ror.query(f'Ticker == @lst_symbol_list{[k]}') for k in range(0, len(lst_symbol_list))]
             fig = plt.figure()
             for frame in data_Q:
                 plt.plot(frame['Date'], frame['Return %'])
-            plt.legend(symbol_list)
+            plt.legend(lst_symbol_list)
             plt.xlabel('Date')
             plt.ylabel('Return %')
             plt.show()
@@ -385,46 +376,6 @@ Equivalently, you can upload a portfolio using a .csv file - Please ensure the c
         now = format(datetime.now().strftime('%d-%m-%Y %H-%M-%S'))
         data_scen_join.to_excel(os.path.join(cwd, "Portfolio_Scenarios " + now + ".xlsx"))
         messagebox.showinfo("Portfolio_Scenarios", "Portfolio Scenarios has been saved as: " + os.path.join(cwd, "Portfolio_Scenarios " + now + ".xlsx"))
-    
-    def blackScholes(self):
-        #Basic B-S methodology for calls/puts.
-        today = (datetime.now()).strftime('%d/%m/%Y')
-        yesterday = (datetime.now() - timedelta(1)).strftime('%d/%m/%Y')
-        secs = 86400
-        date_format = '%d/%m/%Y'
-        base_date_format = datetime.strptime('01/01/1970', date_format)
-        today_format = datetime.strptime(today, date_format)
-        yesterday_format = datetime.strptime(yesterday, date_format)
-        difference_1 = str((yesterday_format - base_date_format).days*secs) #days between start date and base date 01/01/1970 converted to seconds
-        difference_2 = str((today_format - base_date_format).days*secs)
-        five_yr_yield = '^FVX' #using the five year treasury yield as the risk free rate
-        RFR_url  = f'https://query2.finance.yahoo.com/v8/finance/chart/{five_yr_yield}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true'
-        headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"}
-        r = [requests.get(RFR_url, headers=headers).json()]
-        print(r)
-        r = r[0]['chart']['result'][0]['meta']['chartPreviousClose']/100
-        print(r)
-        tickerQ = simpledialog.askstring("Ticker", "Enter a Ticker:")
-        one_year_ago = (datetime.now() - timedelta(365)).strftime('%d/%m/%Y')
-        one_year_ago_format = datetime.strptime(one_year_ago, date_format)
-        difference_1 = str((one_year_ago_format - base_date_format).days*secs)
-        volEst_url  = f'https://query2.finance.yahoo.com/v8/finance/chart/{tickerQ}?period1={difference_1}&period2={difference_2}&interval=1d&events=history&includeAdjustedClose=true'
-        volEst_data = [requests.get(volEst_url, headers=headers).json()]
-        volEst_data = volEst_data[0]['chart']['result'][0]['indicators']['quote'][0]['close']
-        returns = [0] + [(volEst_data[i+1]-volEst_data[i])/volEst_data[i] for i in range(0, len(volEst_data)-1)]
-        sigma = round(np.std(returns)*np.sqrt(252),2) #annualising volatility approximation
-        print(sigma)
-        K = simpledialog.askfloat("Strike", "Enter Contract Strike Price")
-        T = 252/365
-        S = volEst_data[-1]
-        d1 = (np.log(S/K) + (r + sigma**2/2)*T)/(sigma*np.sqrt(T))
-        d2 = d1 - sigma*np.sqrt(T)
-        if msg == "Button Clicked: Black Scholes Call":
-            price = round(S*norm.cdf(d1, 0, 1) - K*np.exp(-r*T)*norm.cdf(d2, 0, 1),2)
-            tk.messagebox.showinfo("Call Price", "Black Scholes values the option at : " + str(price))
-        elif msg == "Button Clicked: Black Scholes Put":
-            price = round(K*np.exp(-r*T)*norm.cdf(-d2, 0, 1) - S*norm.cdf(-d1, 0, 1),2)
-            tk.messagebox.showinfo("Call Price", "Black Scholes values the option at : " + str(price))
 
     def statistics(self):
         #some key metrics and ratios
